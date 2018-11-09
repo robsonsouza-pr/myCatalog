@@ -1,0 +1,61 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+		<main>
+			
+			<div class="row divider green">
+			<div class="col-md-12"></div>
+			</div>
+			<div class="row banner menu">
+				<div class="col-md-11 col-md-offset-1 padding-none">
+					<figure class="creator">
+						<img src="{{ creator.picture}}">
+						<figcaption>{{ creator.name }}</figcaption>
+					</figure>
+					</h1>
+
+				</div>
+			</div>
+
+			<div class="row banner main">
+				<div class="col-md-1"></div>
+				<div class="col-md-11 padding-none">
+					<h1>Restaurantes</h1>
+				</div>
+			</div>
+
+			<!-- Uma div para criar o link pra adicionar um novo restaurante -->
+			<div class="row padding-top padding-bottom">
+				<!-- Tem três divs dentro dela, que interessante.-->
+				<div class="col-md-1"></div>
+				<div class="col-md-10 padding-none">
+					<!-- Na div maior, tem um a com botão e dentro do botão um spam -->
+					<a href="{{url_for('createRestaurant')}}">
+						<button class="btn btn-default" id="new-restaurant">
+							<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Novo Restaurant
+						</button>
+					</a>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			
+			<div>
+				{% for restaurant in restaurants %}
+					{% if restaurant %}
+						<a href="{{url_for('detailRestaurant', restaurant_id = restaurant.id)}}">
+							<div class="row">
+								<div class="col-md-1">
+								</div>
+								<div class="col-md-10 restaurant-list">
+									<h3> {{restaurant.name}} </h3>
+								</div>
+								<div class="col-md-1">
+								</div>
+							</div>
+						</a>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</main>
+{% include "footer.html" %}
+{% endblock %}
