@@ -8,12 +8,13 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 # definicao da classe usuario
 class Usuario(Base):
 
     __tablename__ = 'usuario'
 
-    id = Column (Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     nome = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     imagem = Column(String(250), nullable=False)

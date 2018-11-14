@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+	<header class="row banner menu"> 
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1> Quer deletar o item {{item.nome}}? </h1>
+		</div>		
+	</header>
+	<main>
+		<div class="row">
+			<div class="col-md-6 col-md-offset-1 padding-top">
+				<form method="POST" enctype="multipart/form-data" action="{{url_for('deletar_item', categoria_id = categoria_id, item_id = item.id)}}">
+					<div class="form-group">
+						<button class="btn btn-default"> 
+							<span class="glyphicon glyphicon-trash"> </span>Deletar 
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+{% endblock %}

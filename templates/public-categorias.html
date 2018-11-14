@@ -10,7 +10,7 @@
 			<div class="row banner main">
 				<div class="col-md-1"></div>
 				<div class="col-md-11 padding-none">
-					<h1>Restaurantes</h1>
+					<h1>Categorias</h1>
 				</div>
 			</div>
 
@@ -26,12 +26,12 @@
 			<div>
 				{% for categoria in categorias %}
 					{% if categoria %}
-						<a href="{{url_for('detailRestaurant', restaurant_id = restaurant.id)}}">
+						<a href="{{url_for('detalhar_categoria',categoria_id=categoria.id)}}">
 							<div class="row">
 								<div class="col-md-1">
 								</div>
 								<div class="col-md-10 restaurant-list">
-									<h3> {{categoria.name}} </h3>
+									<h3> {{categoria.nome}} </h3>
 								</div>
 								<div class="col-md-1">
 								</div>
@@ -41,5 +41,4 @@
 				{% endfor %}
 			</div>
 		</main>
-{% include "footer.html" %}
 {% endblock %}

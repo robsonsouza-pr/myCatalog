@@ -1,0 +1,50 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+
+	<div class="row banner menu">
+		<!-- Cada div row é dividido em 12 colunas, ao escolher cols-md-11, quer dizer que ocupara 11 colunas-->
+		<!-- cols-md-offset-1 diz para preencher com vazio o espaço que falta-->
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>{{ categoria.nome }}</h1>
+		</div>
+	</div>
+	<main>
+		<div class="row padding-top padding-bottom">
+			<div class="col-md-1"> </div>
+
+			<div class="col-md-10">
+				<a href="{{url_for('criar_item', categoria_id = categoria.id)}}">
+					<button class="btn btn-default">
+						<span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Novo item
+					</button>
+				</a>
+			</div>
+
+			<div class="col-md-1"></div>
+		</div>
+		{% if items!=[] %}
+			{% for i in items %}
+				<div class="row">
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+						<div class="menu-item">
+							<h3>{{i.nome}}</h3>
+							<p>{{i.descricao}}</p>
+							<a href="{{url_for('editar_item',categoria_id = categoria.id, item_id = i.id)}}">Editar </a>|
+							<a href="{{url_for('deletar_item',categoria_id = categoria.id, item_id = i.id)}}"> Excluir </a>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+				</div>
+			{% endfor %}
+		{% endif %}
+		<div>
+			<a href="{{url_for('categorias')}}"> Voltar </a>
+		</div>
+	</main>
+{% endblock %}

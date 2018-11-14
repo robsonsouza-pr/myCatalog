@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+
+	<div class="row banner menu">
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>Adicionar um Item à categoria</h1>
+		</div>
+	</div>
+	<main class="row">
+		<div  class="col-md-6 col-md-offset-1 padding-top" class="form-group">
+			<form method="POST" enctype="multipart/form-data" action="{{url_for('criar_item',categoria_id=categoria_id)}}">
+				<div class="form-group">
+					<label for="nome">Nome:</label>
+					<input class="form-control" type="text" name="nome" placeholder="Nome">
+					<label for="descricao">Descrição:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="descricao"></textarea>
+					<div class="padding-bottom"></div>
+					<button class="btn btn-default" type="submit">
+						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Salvar 
+					</button>
+				</div>
+			</form>
+		</div>
+	</main>
+{% endblock %}
