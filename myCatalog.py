@@ -26,7 +26,7 @@ CLIENT_ID = json.loads(
 app = Flask(__name__)
 
 # conexao com o banco de dados
-engine = create_engine('sqlite:///mycatalog.db?check_same_thread=False')
+engine = create_engine('sqlite:///meucatalogo.db?check_same_thread=False')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -327,14 +327,20 @@ def detalhar_categoria(categoria_id):
     categoria = session.query(Categoria).filter_by(
         id=categoria_id
     ).one()
-    items = session.query(Item).filter_by(
-        categoria_id=categoria.id
-    ).order_by(Item.nome).all()
+
     if 'username' in login_session:
+        creator_id = get_user_id(login_session['email'])
+        items = session.query(Item).filter_by(
+            categoria_id=categoria.id,
+            usuario_id=creator_id
+        ).order_by(Item.nome).all()
         return render_template(
             'detalhar-categoria.html', categoria=categoria, items=items
         )
     else:
+        items = session.query(Item).filter_by(
+            categoria_id=categoria.id
+        ).order_by(Item.nome).all()
         return render_template(
             'public-detalhar-categoria.html', categoria=categoria, items=items
         )
@@ -348,10 +354,12 @@ def criar_item(categoria_id):
 
     categoria = session.query(Categoria).filter_by(id=categoria_id).one()
     if request.method == 'POST':
+        creator_id = get_user_id(login_session['email'])
         item = Item(
             nome=request.form["nome"],
             descricao=request.form["descricao"],
-            categoria_id=categoria.id
+            categoria_id=categoria.id,
+            usuario_id=creator_id
         )
         session.add(item)
         session.commit()
@@ -375,13 +383,17 @@ def editar_item(categoria_id, item_id):
         return redirect('/login')
     item = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
-        if request.form["nome"]:
-            item.nome = request.form["nome"]
-        if request.form["descricao"]:
-            item.descricao = request.form["descricao"]
-        session.add(item)
-        session.commit()
-        flash("Item alterado com sucesso!")
+        creator_id = get_user_id(login_session['email'])
+        if creator_id == item.usuario_id:
+            if request.form["nome"]:
+                item.nome = request.form["nome"]
+            if request.form["descricao"]:
+                item.descricao = request.form["descricao"]
+            session.add(item)
+            session.commit()
+            flash("Item alterado com sucesso!")
+        else:
+            flash("Nao e possivel alterar o item de outro usuario!")
         return redirect(
             url_for(
                 'detalhar_categoria', categoria_id=categoria_id
@@ -400,9 +412,13 @@ def deletar_item(categoria_id, item_id):
         return redirect('/login')
     item = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
-        session.delete(item)
-        session.commit()
-        flash("Item excluido com sucesso!")
+        creator_id = get_user_id(login_session['email'])
+        if creator_id == item.usuario_id:
+            session.delete(item)
+            session.commit()
+            flash("Item excluido com sucesso!")
+        else:
+            flash("Nao e possivel alterar item de outra pessoa")
         return redirect(
             url_for(
                 'detalhar_categoria', categoria_id=categoria_id
@@ -419,6 +435,13 @@ def deletar_item(categoria_id, item_id):
 def categorias_json():
     categorias = session.query(Categoria).all()
     return jsonify(Categoria=[c.serialize for c in categorias])
+
+
+@app.route('/categoria/<int:categoria_id>/item/<int:item_id>/JSON')
+def item_json(categoria_id, item_id):
+    item = session.query(Item).filter_by(id=item_id,
+                                         categoria_id=categoria_id).one()
+    return jsonify(Item=[item.serialize])
 
 
 if __name__ == '__main__':

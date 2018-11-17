@@ -45,6 +45,8 @@ class Item(Base):
     descricao = Column(String(250), nullable=False)
     categoria_id = Column(Integer, ForeignKey('categoria.id'))
     categoria = relationship(Categoria)
+    usuario_id = Column(Integer, ForeignKey('usuario.id'))
+    usuario = relationship(Usuario)
 
     @property
     def serialize(self):
@@ -56,6 +58,6 @@ class Item(Base):
         }
 
 
-engine = create_engine('sqlite:///mycatalog.db')
+engine = create_engine('sqlite:///meucatalogo.db')
 
 Base.metadata.create_all(engine)
