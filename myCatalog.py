@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2.7
 
 # imports
 from flask import Flask, request, url_for, redirect,\
@@ -233,11 +233,12 @@ def get_user_info(user_id):
 
 
 def get_user_id(email):
-    try:
-        user = session.query(Usuario).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
+
+        user = session.query(Usuario).filter_by(email=email).one_or_none()
+        if user:
+            return user.id
+        else:
+            return user
 
 
 @app.route('/logout')
@@ -326,24 +327,24 @@ def categorias():
 def detalhar_categoria(categoria_id):
     categoria = session.query(Categoria).filter_by(
         id=categoria_id
-    ).one()
-
-    if 'username' in login_session:
-        creator_id = get_user_id(login_session['email'])
-        items = session.query(Item).filter_by(
-            categoria_id=categoria.id,
-            usuario_id=creator_id
-        ).order_by(Item.nome).all()
-        return render_template(
-            'detalhar-categoria.html', categoria=categoria, items=items
-        )
-    else:
+    ).one_or_none()
+    if categoria:
         items = session.query(Item).filter_by(
             categoria_id=categoria.id
         ).order_by(Item.nome).all()
-        return render_template(
-            'public-detalhar-categoria.html', categoria=categoria, items=items
-        )
+
+        if 'username' in login_session:
+            return render_template(
+                'detalhar-categoria.html', categoria=categoria, items=items
+            )
+        else:
+            return render_template(
+                'public-detalhar-categoria.html', categoria=categoria,
+                items=items
+            )
+    else:
+        flash("Nao foi encontrada a categoria solicitada")
+        return redirect('/categorias')
 
 
 @app.route('/categoria/<int:categoria_id>/item/criar',
@@ -418,7 +419,7 @@ def deletar_item(categoria_id, item_id):
             session.commit()
             flash("Item excluido com sucesso!")
         else:
-            flash("Nao e possivel alterar item de outra pessoa")
+            flash("Nao e possivel exluir itens de outros usuario")
         return redirect(
             url_for(
                 'detalhar_categoria', categoria_id=categoria_id
@@ -434,7 +435,19 @@ def deletar_item(categoria_id, item_id):
 @app.route('/categorias/JSON')
 def categorias_json():
     categorias = session.query(Categoria).all()
-    return jsonify(Categoria=[c.serialize for c in categorias])
+    if categorias:
+        cat = []
+        for c in categorias:
+            categoria_temp = c.serialize
+            categoria_temp['items'] = []
+            items = session.query(Item).filter_by(categoria_id=c.id)
+            for i in items:
+                item_dict = i.serialize
+                categoria_temp['items'].append(item_dict)
+            cat.append(categoria_temp)
+        return jsonify(cat)
+    else:
+        return "Nao foram encontradas categorias cadastradas"
 
 
 @app.route('/categoria/<int:categoria_id>/item/<int:item_id>/JSON')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2.7
 
 # importacoes n
 from sqlalchemy import Column, ForeignKey, Integer, String

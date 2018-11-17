@@ -27,6 +27,19 @@
 
 			<div class="col-md-1"></div>
 		</div>
+
+		<!--MESSAGE FLASHING EXAMPLE -->
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+
+		<ul>
+		{% for message in messages %}
+		  <li><strong>{{message}}</strong></li>
+		  {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+
 		{% if items!=[] %}
 			{% for i in items %}
 				<div class="row">

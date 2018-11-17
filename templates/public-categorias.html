@@ -14,14 +14,17 @@
 				</div>
 			</div>
 
-			<!-- Uma div para criar o link pra adicionar um novo restaurante -->
-			<div class="row padding-top padding-bottom">
-				<!-- Tem três divs dentro dela, que interessante.-->
-				<div class="col-md-1"></div>
-				<div class="col-md-10 padding-none">
-				</div>
-				<div class="col-md-1"></div>
-			</div>
+			<!--MESSAGE FLASHING EXAMPLE -->
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+
+			<ul>
+			{% for message in messages %}
+			  <li><strong>{{message}}</strong></li>
+			  {% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
 			
 			<div>
 				{% for categoria in categorias %}
